@@ -1,0 +1,51 @@
+openapi: 3.0.0
+
+info:
+  title: Student API
+  description: Sample API for security scanner testing
+  version: 1.0.0
+
+servers:
+  - url: https://api.example.com
+
+paths:
+
+  /users:
+    get:
+      summary: Get all users
+      responses:
+        '200':
+          description: Successful response
+
+    post:
+      summary: Create a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+
+      responses:
+        '201':
+          description: User created
+
+  /users/{userId}:
+    get:
+      summary: Get user by ID
+
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Successful response
