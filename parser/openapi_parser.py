@@ -1,11 +1,48 @@
 import yaml
 import json
-from openapi_spec_validator import validate
+
+try:
+    from openapi_spec_validator import validate as _validate_with_library
+except ImportError:
+    _validate_with_library = None
+
+
+def _basic_validate_spec(spec):
+    """Validate the OpenAPI fields the parser relies on without extras."""
+    if not isinstance(spec, dict):
+        raise ValueError("The OpenAPI document must be an object")
+
+    if not isinstance(spec.get("openapi"), str) or not spec["openapi"].startswith("3."):
+        raise ValueError("An OpenAPI 3.x version is required")
+
+    info = spec.get("info")
+    if not isinstance(info, dict) or not info.get("title") or not info.get("version"):
+        raise ValueError("The info.title and info.version fields are required")
+
+    paths = spec.get("paths")
+    if not isinstance(paths, dict):
+        raise ValueError("The paths field must be an object")
+
+    for path, path_item in paths.items():
+        if not isinstance(path, str) or not path.startswith("/"):
+            raise ValueError("Each path must start with '/'")
+        if not isinstance(path_item, dict):
+            raise ValueError(f"Path item for {path!r} must be an object")
+
+        for method, operation in path_item.items():
+            if method.lower() in HTTP_METHODS:
+                if not isinstance(operation, dict):
+                    raise ValueError(f"Operation {method.upper()} {path} must be an object")
+                if not isinstance(operation.get("responses"), dict) or not operation["responses"]:
+                    raise ValueError(f"Operation {method.upper()} {path} must define responses")
 
 
 def validate_spec(spec):
     try:
-        validate(spec)
+        if _validate_with_library is not None:
+            _validate_with_library(spec)
+        else:
+            _basic_validate_spec(spec)
         return True
 
     except Exception as e:
@@ -70,20 +107,35 @@ def extract_endpoints(spec):
 
     return endpoints      
 
-def extract_parameters(operation):
+VALIDATION_SCHEMA_KEYS = (
+    "minLength", "maxLength", "pattern", "enum",
+    "minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum",
+    "multipleOf", "format",
+)
+
+
+def extract_parameters(operation, spec=None):
 
     parameters = []
 
     for param in operation.get("parameters", []):
 
         schema = param.get("schema", {})
+        if spec is not None:
+            schema = resolve_refs(spec, schema)
 
-        parameters.append({
+        parameter = {
             "name": param.get("name"),
             "location": param.get("in"),
             "required": param.get("required", False),
             "type": schema.get("type")
+        }
+        parameter.update({
+            key: schema[key]
+            for key in VALIDATION_SCHEMA_KEYS
+            if key in schema
         })
+        parameters.append(parameter)
 
     return parameters
 
@@ -111,7 +163,8 @@ def extract_responses(operation):
         responses.append({
             "status_code": status_code,
             "description": response.get("description"),
-            "content": response.get("content", {})
+            "content": response.get("content", {}),
+            "headers": response.get("headers", {})
         })
 
     return responses
@@ -203,9 +256,7 @@ def normalize_endpoint(path, method, operation, spec):
         "summary": operation.get("summary"),
         "description": operation.get("description"),
 
-        "parameters": extract_parameters(
-            operation
-        ),
+        "parameters": extract_parameters(operation, spec),
 
         "request_body": extract_request_body(
             operation,
@@ -216,10 +267,12 @@ def normalize_endpoint(path, method, operation, spec):
             operation
         ),
 
-        "security": extract_security(
-            operation,
-            spec
-        )
+        "security": extract_security(operation, spec),
+        "rate_limit": operation.get("x-rate-limit"),
+        "required_security_headers": operation.get(
+            "x-required-security-headers", []
+        ),
+        "required_roles": operation.get("x-required-roles")
     }
 
 def parse_openapi(file_path):
