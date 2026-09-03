@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API Security Scan Report</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .summary {
+            display: flex;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            flex: 1;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        .critical {
+            font-weight: bold;
+        }
+
+        .high {
+            font-weight: bold;
+        }
+
+        .medium {
+            font-weight: bold;
+        }
+
+        .low {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>API Security Scan Report</h1>
+
+<div class="summary">
+
+    <div class="card">
+        <h3>Endpoints</h3>
+        <p>2</p>
+    </div>
+
+    <div class="card">
+        <h3>Findings</h3>
+        <p>2</p>
+    </div>
+
+    <div class="card">
+        <h3>Critical</h3>
+        <p>0</p>
+    </div>
+
+    <div class="card">
+        <h3>High</h3>
+        <p>2</p>
+    </div>
+
+    <div class="card">
+        <h3>Medium</h3>
+        <p>0</p>
+    </div>
+
+    <div class="card">
+        <h3>Low</h3>
+        <p>0</p>
+    </div>
+
+</div>
+
+<h2>Vulnerability Findings</h2>
+
+<table>
+
+<tr>
+    <th>Vulnerability</th>
+    <th>Endpoint</th>
+    <th>Method</th>
+    <th>Severity</th>
+    <th>Confidence</th>
+    <th>Description</th>
+    <th>Evidence</th>
+    <th>Recommendation</th>
+</tr>
+
+<tr>
+    <td>Broken Object Level Authorization</td>
+
+    <td>/users/{userId}</td>
+
+    <td>GET</td>
+
+    <td class="high">
+        High
+    </td>
+
+    <td>0.92</td>
+
+    <td>The endpoint may allow unauthorized access to another user&#x27;s object.</td>
+
+    <td>The endpoint contains an object identifier but does not define sufficient authorization controls.</td>
+
+    <td>Verify that the authenticated user is authorized to access the requested object.</td>
+</tr>
+
+<tr>
+    <td>Missing Authentication</td>
+
+    <td>/users</td>
+
+    <td>POST</td>
+
+    <td class="high">
+        High
+    </td>
+
+    <td>0.95</td>
+
+    <td>The endpoint does not define an authentication requirement.</td>
+
+    <td>No security requirement is specified for the endpoint.</td>
+
+    <td>Require an appropriate authentication mechanism before allowing access.</td>
+</tr>
+
+</table>
+
+</body>
+</html>
