@@ -1,0 +1,32 @@
+{
+  "scan_summary": {
+    "total_endpoints": 2,
+    "total_findings": 2,
+    "critical": 0,
+    "high": 2,
+    "medium": 0,
+    "low": 0
+  },
+  "findings": [
+    {
+      "path": "/users/{userId}",
+      "method": "GET",
+      "vulnerability": "Broken Object Level Authorization",
+      "severity": "High",
+      "confidence": 0.92,
+      "description": "The endpoint may allow unauthorized access to another user's object.",
+      "evidence": "The endpoint contains an object identifier but does not define sufficient authorization controls.",
+      "recommendation": "Verify that the authenticated user is authorized to access the requested object."
+    },
+    {
+      "path": "/users",
+      "method": "POST",
+      "vulnerability": "Missing Authentication",
+      "severity": "High",
+      "confidence": 0.95,
+      "description": "The endpoint does not define an authentication requirement.",
+      "evidence": "No security requirement is specified for the endpoint.",
+      "recommendation": "Require an appropriate authentication mechanism before allowing access."
+    }
+  ]
+}
