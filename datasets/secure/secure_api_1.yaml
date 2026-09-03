@@ -1,0 +1,19 @@
+openapi: 3.0.0
+info:
+  title: Secure User API
+  version: 1.0.0
+components:
+  securitySchemes:
+    BearerAuth: {type: http, scheme: bearer}
+paths:
+  /users/{id}:
+    delete:
+      security: [{BearerAuth: []}]
+      x-required-roles: [admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: {type: integer, minimum: 1, maximum: 100000}
+      responses:
+        "204": {description: Deleted}

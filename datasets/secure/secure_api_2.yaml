@@ -1,0 +1,19 @@
+openapi: 3.0.0
+info:
+  title: Secure Authentication API
+  version: 1.0.0
+components:
+  securitySchemes:
+    BearerAuth: {type: http, scheme: bearer}
+paths:
+  /login:
+    post:
+      security: [{BearerAuth: []}]
+      x-rate-limit: 5
+      x-required-security-headers: [Strict-Transport-Security]
+      responses:
+        "200":
+          description: Logged in
+          headers:
+            Strict-Transport-Security:
+              schema: {type: string}
