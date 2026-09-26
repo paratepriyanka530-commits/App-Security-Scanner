@@ -6,8 +6,10 @@ from pathlib import Path
 
 from parser.openapi_parser import parse_openapi
 from rules.security_rules import run_all_rules
+from rules.api_inventory_rules import check_api_inventory
+from rules.api_consumption_rules import check_api_consumption
 
-from .finding import build_finding
+from .finding import build_api_finding, build_finding
 from .severity import highest_severity
 
 
@@ -50,8 +52,20 @@ def scan_parsed_api(parsed_api, source=None):
         raise ValueError("parsed_api['endpoints'] must be a list")
 
     findings = []
+
     for endpoint_index, endpoint in enumerate(endpoints):
         findings.extend(scan_endpoint(endpoint, endpoint_index))
+
+        api_findings = check_api_inventory(parsed_api)
+        api_findings.extend(check_api_consumption(parsed_api))
+
+        for finding_index, raw in enumerate(api_findings):
+            findings.append(
+                build_api_finding(
+                    raw,
+                    finding_index,
+                )
+            )
 
     return {
         "source": str(source) if source is not None else None,

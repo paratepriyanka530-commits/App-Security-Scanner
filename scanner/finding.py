@@ -21,15 +21,44 @@ RULE_METADATA = {
     "Unbounded Pagination": (
         "API4:2023 Unrestricted Resource Consumption",
         0.80,
-        ),
+    ),
     "Unbounded Numeric Input": (
         "API4:2023 Unrestricted Resource Consumption",
         0.75,
-        ),
+    ),
     "Potential SSRF Input": (
         "API7:2023 Server Side Request Forgery",
          0.75,
-        ),
+    ),
+    "Incomplete API Inventory": (
+        "API9:2023 Improper Inventory Management",
+        0.70,
+    ),
+    "Potential Unsafe API Consumption": (
+        "API10:2023 Unsafe Consumption of APIs",
+        0.75,
+    ),
+    "Empty API Inventory": (
+        "API9:2023 Improper Inventory Management",
+        0.80,
+    ),
+    "Potential Unsafe API Consumption": (
+        "API10:2023 Unsafe Consumption of APIs",
+        0.75,
+    ),
+    "Incomplete API Inventory": (
+        "API9:2023 Improper Inventory Management",
+        0.70,
+    ),
+
+    "Empty API Inventory": (
+        "API9:2023 Improper Inventory Management",
+        0.80,
+    ),
+    "Potential Unsafe API Consumption": (
+        "API10:2023 Unsafe Consumption of APIs",
+        0.75,
+    ),
 }
 
 
@@ -55,4 +84,32 @@ def build_finding(raw_finding, endpoint, endpoint_index, finding_index):
         "severity": normalize_severity(raw_finding.get("severity")),
         "confidence": confidence,
         "evidence": raw_finding.get("message", "No evidence supplied by the rule."),
+    }
+def build_api_finding(raw_finding, finding_index):
+    """Build a report-ready finding that applies to the whole API."""
+    rule = raw_finding.get("rule", "Unknown Rule")
+    owasp_category, default_confidence = RULE_METADATA.get(
+        rule, ("Unmapped", 0.50)
+    )
+
+    confidence = raw_finding.get("confidence", default_confidence)
+    try:
+        confidence = float(confidence)
+    except (TypeError, ValueError):
+        confidence = default_confidence
+
+    confidence = round(min(1.0, max(0.0, confidence)), 2)
+
+    return {
+        "finding_id": f"API-{finding_index + 1:03d}",
+        "endpoint": None,
+        "method": None,
+        "rule": rule,
+        "owasp_category": owasp_category,
+        "severity": normalize_severity(raw_finding.get("severity")),
+        "confidence": confidence,
+        "evidence": raw_finding.get(
+            "message",
+            "No evidence supplied by the rule.",
+        ),
     }
