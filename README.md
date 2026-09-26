@@ -38,3 +38,88 @@ RAG Knowledge Base
 Security Findings
         ↓
 Report Generation
+
+## Person 1 — OpenAPI Parser & Security Rules
+
+### OpenAPI Parser
+
+The parser accepts OpenAPI YAML and JSON specifications and supports:
+
+- OpenAPI 3.0 and 3.1
+- API metadata extraction
+- Endpoint and HTTP method extraction
+- Path-level and operation-level parameters
+- Request body extraction
+- Response extraction
+- Security scheme extraction
+- Local `$ref` resolution
+- Operation-level parameter overrides
+
+### Implemented Security Rules
+
+The security-rule layer performs static analysis of normalized OpenAPI endpoints.
+
+| OWASP API Security Category | Implemented Check |
+|---|---|
+| API1:2023 | Broken Object Level Authorization |
+| API2:2023 | Broken Authentication |
+| API3:2023 | Broken Object Property Level Authorization |
+| API4:2023 | Unrestricted Resource Consumption |
+| API5:2023 | Broken Function Level Authorization |
+| API7:2023 | Server Side Request Forgery |
+| API8:2023 | Security Misconfiguration |
+| API9:2023 | Improper Inventory Management |
+| API10:2023 | Unsafe Consumption of APIs |
+
+### API4 — Resource Consumption
+
+Static checks include:
+
+- Unbounded pagination parameters
+- Unbounded numeric parameters
+
+### API7 — SSRF
+
+Detects URL-like inputs such as:
+
+- `url`
+- `uri`
+- `callback`
+- `webhook`
+- `target`
+- `redirect`
+- URI/URL schema formats
+
+### API9 — Improper Inventory Management
+
+Checks for missing:
+
+- API title
+- API version
+- OpenAPI version
+- Documented endpoints
+
+### API10 — Unsafe Consumption of APIs
+
+Detects request-body properties that accept URI/URL values without documented validation or allowlist controls.
+
+### Finding Format
+
+Each scanner finding contains:
+
+- Finding ID
+- Endpoint
+- HTTP method
+- Security rule
+- OWASP category
+- Severity
+- Confidence
+- Evidence
+
+### Testing
+
+Current test suite:
+
+**44 tests passed**
+
+The scanner has been verified against vulnerable and secure OpenAPI datasets.
