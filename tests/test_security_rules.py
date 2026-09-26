@@ -1,4 +1,6 @@
 import unittest
+from rules.resource_rules import check_resource_consumption
+from rules.ssrf_rules import check_ssrf
 from rules.security_rules import (
     check_missing_authentication,
     check_sensitive_data_exposure,
@@ -93,6 +95,68 @@ class TestSecurityRules(unittest.TestCase):
             "responses": []
         }
         self.assertEqual(run_all_rules(endpoint), [])
+
+    def test_unbounded_pagination(self):
+        endpoint = {
+            "path": "/users",
+            "method": "GET",
+            "parameters": [
+                {
+                    "name": "limit",
+                    "location": "query",
+                    "required": False,
+                    "type": "integer",
+                }
+            ],
+        }
+
+        findings = check_resource_consumption(endpoint)
+
+        assert any(
+            finding["rule"] == "Unbounded Pagination"
+            for finding in findings
+        )
+
+
+    def test_bounded_pagination_is_safe(self):
+        endpoint = {
+            "path": "/users",
+            "method": "GET",
+            "parameters": [
+                {
+                    "name": "limit",
+                    "location": "query",
+                    "required": False,
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                }
+            ]
+        }
+
+        assert check_resource_consumption(endpoint) == []
+
+
+    def test_unbounded_numeric_input(self):
+        endpoint = {
+            "path": "/search",
+            "method": "GET",
+            "parameters": [
+                {
+                    "name": "amount",
+                    "location": "query",
+                    "required": False,
+                    "type": "number",
+                }
+            ]
+        }
+
+        findings = check_resource_consumption(endpoint)
+
+        assert any(
+            finding["rule"] == "Unbounded Numeric Input"
+            for finding in findings
+        )    
 
 
 if __name__ == "__main__":

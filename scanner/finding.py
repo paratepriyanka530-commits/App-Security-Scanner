@@ -17,6 +17,19 @@ RULE_METADATA = {
     "Missing Input Validation": ("API8:2023 Security Misconfiguration", 0.85),
     "Missing Rate Limiting": ("API4:2023 Unrestricted Resource Consumption", 0.80),
     "Missing Security Header": ("API8:2023 Security Misconfiguration", 0.90),
+
+    "Unbounded Pagination": (
+        "API4:2023 Unrestricted Resource Consumption",
+        0.80,
+        ),
+    "Unbounded Numeric Input": (
+        "API4:2023 Unrestricted Resource Consumption",
+        0.75,
+        ),
+    "Potential SSRF Input": (
+        "API7:2023 Server Side Request Forgery",
+         0.75,
+        ),
 }
 
 

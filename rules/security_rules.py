@@ -9,10 +9,13 @@ from .authorization_rules import check_authorization
 from .input_validation_rules import check_input_validation
 from .rate_limit_rules import check_rate_limiting
 from .security_headers_rules import check_security_headers
+from .resource_rules import check_resource_consumption
+from .ssrf_rules import check_ssrf
 
 
 def run_all_rules(endpoint):
     findings = []
+
     for rule in (
         check_missing_authentication,
         check_sensitive_data_exposure,
@@ -21,6 +24,9 @@ def run_all_rules(endpoint):
         check_security_headers,
         check_rate_limiting,
         check_dangerous_method_security,
+        check_resource_consumption,
+        check_ssrf,
     ):
         findings.extend(rule(endpoint))
+
     return findings
