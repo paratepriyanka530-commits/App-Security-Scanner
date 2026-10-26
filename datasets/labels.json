@@ -1,0 +1,16 @@
+{
+  "vulnerable/vulnerable_api_1.yaml": [
+    "Dangerous Operation Without Security",
+    "Missing Authentication",
+    "Missing Authorization",
+    "Missing Input Validation",
+    "Missing Security Header",
+    "Sensitive Data Exposure"
+  ],
+  "vulnerable/vulnerable_api_2.yaml": [
+    "Dangerous Operation Without Security",
+    "Missing Rate Limiting"
+  ],
+  "secure/secure_api_1.yaml": [],
+  "secure/secure_api_2.yaml": []
+}

@@ -1,0 +1,79 @@
+[
+  {
+    "file": "../datasets/vulnerable/vulnerable_api_1.yaml",
+    "endpoint": "/users",
+    "method": "GET",
+    "vulnerable": true,
+    "owasp_category": "API2:2023 Broken Authentication"
+  },
+  {
+    "file": "../datasets/vulnerable/vulnerable_api_1.yaml",
+    "endpoint": "/users",
+    "method": "GET",
+    "vulnerable": true,
+    "owasp_category": "API3:2023 Broken Object Property Level Authorization"
+  },
+  {
+    "file": "../datasets/vulnerable/vulnerable_api_1.yaml",
+    "endpoint": "/users",
+    "method": "GET",
+    "vulnerable": true,
+    "owasp_category": "API8:2023 Security Misconfiguration"
+  },
+  {
+    "file": "../datasets/vulnerable/vulnerable_api_1.yaml",
+    "endpoint": "/users/{id}",
+    "method": "DELETE",
+    "vulnerable": true,
+    "owasp_category": "API1:2023 Broken Object Level Authorization"
+  },
+  {
+    "file": "../datasets/vulnerable/vulnerable_api_1.yaml",
+    "endpoint": "/users/{id}",
+    "method": "DELETE",
+    "vulnerable": true,
+    "owasp_category": "API2:2023 Broken Authentication"
+  },
+  {
+    "file": "../datasets/vulnerable/vulnerable_api_1.yaml",
+    "endpoint": "/users/{id}",
+    "method": "DELETE",
+    "vulnerable": true,
+    "owasp_category": "API5:2023 Broken Function Level Authorization"
+  },
+  {
+    "file": "../datasets/vulnerable/vulnerable_api_1.yaml",
+    "endpoint": "/users/{id}",
+    "method": "DELETE",
+    "vulnerable": true,
+    "owasp_category": "API8:2023 Security Misconfiguration"
+  },
+  {
+    "file": "../datasets/vulnerable/vulnerable_api_2.yaml",
+    "endpoint": "/login",
+    "method": "POST",
+    "vulnerable": true,
+    "owasp_category": "API4:2023 Unrestricted Resource Consumption"
+  },
+  {
+    "file": "../datasets/vulnerable/vulnerable_api_2.yaml",
+    "endpoint": "/login",
+    "method": "POST",
+    "vulnerable": true,
+    "owasp_category": "API5:2023 Broken Function Level Authorization"
+  },
+  {
+    "file": "../datasets/secure/secure_api_1.yaml",
+    "endpoint": "/users/{id}",
+    "method": "DELETE",
+    "vulnerable": false,
+    "owasp_category": null
+  },
+  {
+    "file": "../datasets/secure/secure_api_2.yaml",
+    "endpoint": "/login",
+    "method": "POST",
+    "vulnerable": false,
+    "owasp_category": null
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "vulnerable_api.yaml": {
+    "expected_vulnerabilities": [
+      "Missing Authentication",
+      "Sensitive Data Exposure",
+      "Missing Input Validation",
+      "Missing Rate Limiting",
+      "Dangerous Operation Without Security"
+    ]
+  },
+  "secure_api.yaml": {
+    "expected_vulnerabilities": []
+  }
+}
