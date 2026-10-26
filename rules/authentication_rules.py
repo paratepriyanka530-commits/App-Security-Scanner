@@ -36,8 +36,35 @@ def check_sensitive_data_exposure(endpoint):
     return [_finding("Sensitive Data Exposure", "HIGH", f"Sensitive field '{field}' may be exposed in an API response.") for field in sorted(found)]
 
 
+
 def check_dangerous_method_security(endpoint):
     method = endpoint.get("method", "").upper()
+    path = endpoint.get("path", "").lower()
+
+    # Login and authentication endpoints may intentionally be public.
+    public_auth_paths = {
+        "/login",
+        "/auth/login",
+        "/signin",
+        "/sign-in",
+        "/register",
+        "/signup",
+        "/sign-up",
+        "/forgot-password",
+        "/reset-password",
+    }
+
+    if path in public_auth_paths:
+        return []
+
     if method in DANGEROUS_METHODS and not endpoint.get("security"):
-        return [_finding("Dangerous Operation Without Security", "HIGH", f"{method} operation {endpoint.get('path')} does not define security requirements.")]
+        return [
+            _finding(
+                "Dangerous Operation Without Security",
+                "HIGH",
+                f"{method} operation {endpoint.get('path')} does not define security requirements.",
+            )
+        ]
+
     return []
+
