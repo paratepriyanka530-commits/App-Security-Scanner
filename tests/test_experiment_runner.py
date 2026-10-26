@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -13,10 +14,12 @@ from ai_analysis.evaluation.experiment_runner import (
     run_experiment,
 )
 from ai_analysis.llm.base import LLMProvider, LLMProviderError
+from parser.openapi_parser import parse_openapi
 
 
 API2 = "API2:2023 Broken Authentication"
 API8 = "API8:2023 Security Misconfiguration"
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 class QueueProvider(LLMProvider):
@@ -144,6 +147,7 @@ def test_ground_truth_loader_validates_records_and_file_references(tmp_path):
     with pytest.raises(GroundTruthValidationError, match="Invalid ground-truth"):
         load_ground_truth(bad)
 
+
     bad.write_text(
         json.dumps(
             [{"file": "api.json", "endpoint": "/health", "method": "GET",
@@ -163,6 +167,33 @@ def test_ground_truth_loader_validates_records_and_file_references(tmp_path):
     )
     with pytest.raises(GroundTruthValidationError, match="Invalid ground-truth"):
         load_ground_truth(bad)
+
+
+def test_checked_in_evaluation_labels_cover_every_endpoint():
+    truth_path = PROJECT_ROOT / "evaluation" / "endpoint_labels.json"
+    records = load_ground_truth(truth_path)
+    records_by_file = {}
+    for record in records:
+        records_by_file.setdefault(record.file, []).append(record)
+
+    assert len(records) == 11
+    assert len(records_by_file) == 4
+    assert len({
+        (record.file, record.endpoint, record.method, record.owasp_category)
+        for record in records
+    }) == len(records)
+
+    for file_name, file_records in records_by_file.items():
+        spec_path = (truth_path.parent / file_name).resolve()
+        endpoints = parse_openapi(str(spec_path))["endpoints"]
+        parsed_keys = {
+            (endpoint["path"], endpoint["method"].upper())
+            for endpoint in endpoints
+        }
+        labeled_keys = {
+            (record.endpoint, record.method) for record in file_records
+        }
+        assert labeled_keys == parsed_keys
 
 
 def test_ground_truth_loader_rejects_malformed_json_and_missing_spec(tmp_path):
